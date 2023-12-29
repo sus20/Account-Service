@@ -22,4 +22,5 @@ def connect_to_db(app):
     }
 
     app.mongodb_client = MongoClient(**mongo_params)
-    app.accounts_db = app.mongodb_client[data["database"]]
+    app.mongo_database = app.mongodb_client[data["database"]]
+    app.accounts_collection = app.mongo_database[data["collection"]]

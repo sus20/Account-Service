@@ -4,7 +4,10 @@ import json
 
 
 from fastapi import FastAPI
+from fastapi.responses import JSONResponse
+from fastapi.exceptions import HTTPException
 from mongo_db import connect_to_db
+from schemas import Account
 
 app = FastAPI()
 
@@ -32,6 +35,28 @@ def get_url():
 @app.get("/ping")
 def ping():
     return {"status": "active"}
+
+
+@app.post("/accounts", response_model=Account)
+def create_account(account_data: Account):
+    try:
+        # Check if accountNumber is already occupied
+        existing_account = app.accounts_collection.find_one(
+            {"accountNumber": account_data.accountNumber})
+        if existing_account:
+            raise HTTPException(
+                status_code=400, detail="AccountNumber already exists")
+
+        # Insert the account data into the collection
+        result = app.accounts_collection.insert_one(account_data.dict())
+        inserted_id = result.inserted_id
+
+        # Return all information about the created account
+        created_account = app.accounts_collection.find_one(
+            {"_id": inserted_id})
+        return created_account
+    except Exception as e:
+        return JSONResponse(content={"error": str(e)}, status_code=500)
 
 
 @app.on_event("startup")
