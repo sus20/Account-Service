@@ -23,7 +23,7 @@ jobs:
       - name: Build and Push Docker Image
         uses: docker/build-push-action@v4.0.0
         with:
-          context: .
+          context: app
           push: true
           tags: |
             docker.io/sussap/account-service:latest
