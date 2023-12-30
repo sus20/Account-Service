@@ -9,9 +9,16 @@ jobs:
   build-and-push:
     runs-on: ubuntu-latest
 
+    env:
+      VERSION: 1.0.0
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
+
+      - name: Set dynamic version
+        run: |
+          echo "VERSION=$((1 + ${{ github.run_number }})).0.0" >> $GITHUB_ENV
 
       - name: Login to Docker Hub
         uses: docker/login-action@v2.1.0
@@ -26,5 +33,6 @@ jobs:
           context: app
           push: true
           tags: |
-            docker.io/sussap/account-service:latest
-            docker.io/sussap/account-service:${{ github.sha }}
+            # docker.io/sussap/account-service:latest
+            docker.io/sussap/account-service:${{ env.VERSION }}
+            # docker.io/sussap/account-service:${{ github.sha }}
