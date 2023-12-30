@@ -21,5 +21,5 @@ jobs:
 
       - name: Build and push Docker image
         run: |
-          docker build -t sussap/account-service:${{ github.sha }} .
+          docker build -t sussap/account-service:${{ github.sha }} -f app/Dockerfile .
           docker push sussap/account-service:${{ github.sha }}
