@@ -1,4 +1,4 @@
-name: Docker Publish
+name: Build and Push Docker Image
 
 on:
   push:
@@ -6,20 +6,25 @@ on:
       - main
 
 jobs:
-  build:
+  build-and-push:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2.7.0
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
       - name: Login to Docker Hub
-        uses: docker/login-action@v1.11.0
+        uses: docker/login-action@v2.1.0
         with:
+          registry: docker.io
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Build and push Docker image
-        run: |
-          docker build -t sussap/account-service:${{ github.sha }} -f app/Dockerfile .
-          docker push sussap/account-service:${{ github.sha }}
+      - name: Build and Push Docker Image
+        uses: docker/build-push-action@v4.0.0
+        with:
+          context: .
+          push: true
+          tags: |
+            docker.io/sussap/account-service:latest
+            docker.io/sussap/account-service:${{ github.sha }}
