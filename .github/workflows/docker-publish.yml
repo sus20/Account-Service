@@ -33,6 +33,4 @@ jobs:
           context: app
           push: true
           tags: |
-            # docker.io/sussap/account-service:latest
             docker.io/sussap/account-service:${{ env.VERSION }}
-            # docker.io/sussap/account-service:${{ github.sha }}
